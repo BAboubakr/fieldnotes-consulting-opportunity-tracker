@@ -16,6 +16,7 @@ const PROFILE = {
 
 const OPPORTUNITY_KEY = 'fieldnotes-opportunity-tracker-v1';
 const TRAINING_KEY = 'fieldnotes-free-training-v1';
+const AI_TRAINING_MIGRATION_KEY = 'fieldnotes-ai-training-seeds-v1';
 const SEED_OPPORTUNITIES = [
   {
     id: 'afdb-kabisa-2026',
@@ -107,6 +108,62 @@ const SEED_TRAINING = [
     verified: '2026-10-24',
     score: 68,
     notes: ''
+  },
+  {
+    id: 'ai-openai-foundations',
+    title: 'AI Foundations',
+    provider: 'OpenAI Academy',
+    url: 'https://academy.openai.com/public/courses/ai-foundations-juzjs?autoEnroll=true',
+    duration: 'About 70 minutes · self-paced',
+    cost: 'Free course · ChatGPT account required',
+    credential: 'Course completion certificate listed',
+    fit: 'Top priority: practice using ChatGPT for scoped research, drafting client deliverables and reviewing AI output responsibly. Use non-confidential sample material.',
+    status: 'Interested',
+    verified: '2026-10-24',
+    score: 94,
+    notes: 'Course is free; availability of ChatGPT features used in exercises may depend on the account plan.'
+  },
+  {
+    id: 'ai-copilot-foundations',
+    title: 'Build foundational generative AI skills',
+    provider: 'Microsoft Learn · Microsoft 365 Copilot Chat',
+    url: 'https://learn.microsoft.com/en-us/training/paths/explore-microsoft-365-copilot-business-chat/',
+    duration: 'About 2 hours 20 minutes · self-paced',
+    cost: 'Free',
+    credential: 'Microsoft Learn progress / module assessment',
+    fit: 'High priority: apply Copilot Chat and responsible prompting to proposals, desk research, meeting preparation and client workflow tasks.',
+    status: 'Interested',
+    verified: '2026-10-24',
+    score: 91,
+    notes: 'Training is free. Microsoft notes that hands-on Copilot experience varies by license and account type.'
+  },
+  {
+    id: 'ai-claude-101',
+    title: 'Claude 101',
+    provider: 'Claude Academy · Anthropic',
+    url: 'https://academy.claude.com/courses/claude-101',
+    duration: 'About 2.5 hours · self-paced',
+    cost: 'Free course · Claude account required',
+    credential: 'Completion badge',
+    fit: 'High priority: learn Claude Projects, document and artifact workflows, research and connected tools for long technical reports, proposals and evidence synthesis.',
+    status: 'Interested',
+    verified: '2026-10-24',
+    score: 92,
+    notes: 'Some advanced features covered require paid plans; the course itself is free.'
+  },
+  {
+    id: 'ai-claude-fluency',
+    title: 'AI Fluency: Framework and Foundations',
+    provider: 'Claude Academy · Anthropic',
+    url: 'https://academy.claude.com/courses',
+    duration: 'About 4 hours · self-paced',
+    cost: 'Free',
+    credential: 'Completion badge',
+    fit: 'Useful for responsible AI use in technical evaluation, policy research and international cooperation. Emphasizes delegation, clear instructions, discernment and diligence.',
+    status: 'Interested',
+    verified: '2026-10-24',
+    score: 88,
+    notes: 'Find “AI Fluency: Framework and foundations” in the official course catalogue.'
   }
 ];
 
@@ -117,7 +174,14 @@ let view = 'opportunities';
 function loadArray(key, fallback) {
   try {
     const value = JSON.parse(localStorage.getItem(key));
-    if (Array.isArray(value)) return value;
+    if (Array.isArray(value)) {
+      if (key === TRAINING_KEY && localStorage.getItem(AI_TRAINING_MIGRATION_KEY) !== 'done') {
+        const additions = fallback.filter(item => item.id.startsWith('ai-') && !value.some(saved => saved.id === item.id));
+        localStorage.setItem(AI_TRAINING_MIGRATION_KEY, 'done');
+        return [...value, ...additions];
+      }
+      return value;
+    }
   } catch (_) {}
   return fallback.map(item => ({ ...item }));
 }
@@ -439,4 +503,3 @@ document.querySelector('#import-file').onchange = async event => {
 };
 
 render();
-
