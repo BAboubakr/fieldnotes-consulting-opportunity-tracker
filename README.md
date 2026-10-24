@@ -26,7 +26,7 @@ No environment variables or build command are needed. The app uses browser local
 - **Opportunities** is for paid consulting mandates and firm/consortium subcontracting leads. Ordinary permanent employment, fellowships, unpaid programmes, training and networking are excluded.
 - **Evaluation work** is a dedicated track for paid proposal evaluation, technical review, independent assessment and monitoring assignments. Roster registration is not a contract or a guarantee of work.
 - **LinkedIn** opens tailored native Posts and Jobs searches and tracks links captured manually from LinkedIn. Captures start as Verify until paid status, scope and eligibility are checked.
-- **Free training** tracks only courses currently described by their providers as free. Use the status menu to mark Interested, Enrolled, In progress, Completed or Skip. Review the provider page for access rules and optional certificate costs before enrolling.
+- **Free training** tracks courses currently described by their providers as free, including ChatGPT/OpenAI Academy, Microsoft Copilot/Microsoft Learn and Claude Academy, as well as energy, climate M&E and PV topics. Use the status menu to mark Interested, Enrolled, In progress, Completed or Skip. Review the provider page for account-plan requirements and optional certificate costs before enrolling.
 - **My pipeline** tracks paid opportunities marked Shortlisted, Contacted or Applied.
 - **Sources** provides official portals and profile-specific web-search links. Search results are discovery clues; verify every lead at the original notice.
 
@@ -40,7 +40,7 @@ The profile uses work-relevant evidence from the report: 11+ years in renewable 
 
 ## Current seed items
 
-The AfDB Kabisa Electric item is a firm-only technical assistance EOI and should be approached only through a qualified bidding firm if its official terms allow it. The European Commission expert database is a rolling evaluator/monitor registration path; selection depends on profile fit and specific assignments. Course leads focus on climate M&E/MRV, sustainable finance and PV systems. The report's August 2026 status labels were not carried forward as current application statuses.
+The AfDB Kabisa Electric item is a firm-only technical assistance EOI and should be approached only through a qualified bidding firm if its official terms allow it. The European Commission expert database is a rolling evaluator/monitor registration path; selection depends on profile fit and specific assignments. Course leads focus on climate M&E/MRV, sustainable finance, PV systems and practical use of ChatGPT, Copilot and Claude for research, analysis, writing and responsible AI review. AI product features practiced may depend on the learner's account plan. Existing browser data is migrated once to add the new AI training rows while preserving tracked statuses and notes. The report's August 2026 status labels were not carried forward as current application statuses.
 
 ## Maintenance
 
