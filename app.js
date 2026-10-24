@@ -144,7 +144,10 @@ function safeUrl(value) {
 }
 
 function isLinkedInUrl(value) {
-  try { return new URL(value).hostname.toLowerCase().endsWith('linkedin.com'); }
+  try {
+    const host = new URL(value).hostname.toLowerCase();
+    return host === 'linkedin.com' || host.endsWith('.linkedin.com');
+  }
   catch (_) { return false; }
 }
 
@@ -238,7 +241,13 @@ function renderOpportunities() {
 
 function openOpportunityDialog(type, sourcePlatform = '') {
   document.querySelector('#opportunity-form [name="type"]').value = type;
-  document.querySelector('#opportunity-form').dataset.captureSource = sourcePlatform;
+  const form = document.querySelector('#opportunity-form');
+  form.dataset.captureSource = sourcePlatform;
+  document.querySelector('#opportunity-dialog .eyebrow').textContent = sourcePlatform === 'LinkedIn' ? 'CAPTURE LINKEDIN OPPORTUNITY' : 'ADD TO YOUR RADAR';
+  document.querySelector('#opportunity-dialog h2').textContent = sourcePlatform === 'LinkedIn' ? 'Capture a LinkedIn post' : 'New opportunity';
+  const sourceField = document.querySelector('#opportunity-form [name="url"]');
+  sourceField.placeholder = sourcePlatform === 'LinkedIn' ? 'https://www.linkedin.com/posts/…' : 'https://…';
+  sourceField.required = sourcePlatform === 'LinkedIn';
   document.querySelector('#opportunity-dialog').showModal();
 }
 
