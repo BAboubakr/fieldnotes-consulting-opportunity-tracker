@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10251f">
+  <meta name="description" content="A private, local-first consulting opportunity tracker tailored to a renewable energy consultant.">
+  <title>Fieldnotes — Consulting Intelligence</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#top" aria-label="Fieldnotes home"><span class="brand-mark">F</span><span>fieldnotes<span class="brand-dot">.</span></span></a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="opportunities"><span class="nav-icon">◫</span> Opportunities <span class="nav-count" id="nav-count">0</span></button>
+        <button class="nav-item" data-view="pipeline"><span class="nav-icon">↗</span> My pipeline</button>
+        <button class="nav-item" data-view="evaluation"><span class="nav-icon">◎</span> Evaluation work <span class="nav-count" id="evaluation-count">0</span></button>
+        <button class="nav-item" data-view="linkedin"><span class="nav-icon">in</span> LinkedIn <span class="nav-count" id="linkedin-count">0</span></button>
+        <button class="nav-item" data-view="training"><span class="nav-icon">✳</span> Free training <span class="nav-count" id="training-count">0</span></button>
+        <button class="nav-item" data-view="sources"><span class="nav-icon">⌁</span> Sources</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="profile-chip"><div class="avatar">AB</div><div><strong>Consultant profile</strong><small>Pipeline private to this browser</small></div><span class="privacy-dot"></span></div>
+        <div class="side-note">Your opportunity and training progress stays in this browser. Export a backup any time. Professional fit details are part of the public app.</div>
+      </div>
+    </aside>
+
+    <main id="top" class="main">
+      <header class="topbar">
+        <div class="crumb">PERSONAL INTELLIGENCE <span>/</span> <b id="crumb-current">OPPORTUNITIES</b></div>
+        <div class="top-actions"><span class="today" id="today"></span><button class="button button-quiet" id="export-btn">↧ Export</button><label class="button button-quiet file-label">↥ Import<input id="import-file" type="file" accept="application/json,.json" hidden></label></div>
+      </header>
+
+      <section class="intro" id="intro">
+        <div><div class="eyebrow"><span class="live-dot"></span> YOUR CONSULTING RADAR</div><h1>Find the work<br><em>worth doing.</em></h1><p class="intro-copy">A focused pipeline for paid energy, climate and industrial transition mandates — scored against your experience, region and working languages.</p></div>
+        <button class="button button-primary add-opportunity">＋ Add opportunity</button>
+      </section>
+
+      <section class="metrics" id="metrics" aria-label="Pipeline summary">
+        <div class="metric"><span>OPEN LEADS</span><strong id="metric-open">0</strong><small>Need a fresh eligibility check</small></div>
+        <div class="metric"><span>STRONG MATCHES</span><strong id="metric-strong">0</strong><small>Score 70 or above</small></div>
+        <div class="metric"><span>CLOSING SOON</span><strong id="metric-soon">0</strong><small>Within the next 7 days</small></div>
+        <div class="metric"><span>IN PIPELINE</span><strong id="metric-pipeline">0</strong><small>Saved for follow-up</small></div>
+      </section>
+
+      <section class="section-heading" id="feed-heading"><div><div class="eyebrow">THE SHORTLIST</div><h2>Opportunity feed <span id="feed-total" class="subtle"></span></h2></div><button class="text-button" id="reset-filters">Reset filters</button></section>
+      <div class="filters" id="filters">
+        <label class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Search role, organisation, keyword…"></label>
+        <select id="type-filter" aria-label="Filter by engagement type"><option value="all">All engagement types</option><option>Individual consultancy</option><option>Technical assistance</option><option>Firm / subcontracting lead</option><option>Roster / framework</option><option>Research / policy</option></select>
+        <select id="status-filter" aria-label="Filter by status"><option value="all">All statuses</option><option>New</option><option>Verify</option><option>Shortlisted</option><option>Contacted</option><option>Applied</option><option>Archived</option></select>
+        <select id="sort-filter" aria-label="Sort opportunities"><option value="score">Best match</option><option value="deadline">Deadline</option><option value="recent">Recently added</option></select>
+      </div>
+
+      <section id="opportunity-list" class="opportunity-list" aria-live="polite"></section>
+      <section id="pipeline-view" class="hidden"></section>
+      <section id="evaluation-view" class="hidden"></section>
+      <section id="linkedin-view" class="hidden"></section>
+      <section id="training-view" class="hidden"></section>
+      <section id="sources-view" class="hidden"></section>
+
+      <footer class="footer"><span>FIELDNOTES <span class="brand-dot">●</span> LOCAL-FIRST CONSULTING INTELLIGENCE</span><span>Profile fit is a decision aid. Verify every notice at its original source.</span></footer>
+    </main>
+  </div>
+
+  <dialog id="opportunity-dialog">
+    <form method="dialog" id="opportunity-form">
+      <div class="dialog-head"><div><div class="eyebrow">ADD TO YOUR RADAR</div><h2>New opportunity</h2></div><button class="close-btn" value="cancel" aria-label="Close">×</button></div>
+      <div class="form-grid">
+        <label class="wide">Opportunity title<input name="title" required placeholder="e.g. PV technical evaluator"></label>
+        <label>Organisation<input name="organisation" placeholder="Organisation or client"></label>
+        <label>Engagement type<select name="type"><option>Individual consultancy</option><option>Technical assistance</option><option>Firm / subcontracting lead</option><option>Roster / framework</option><option>Evaluator / reviewer</option><option>Research / policy</option></select></label>
+        <label>Location<input name="location" placeholder="Remote, Morocco, Africa…"></label>
+        <label>Deadline<input name="deadline" type="date"></label>
+        <label class="wide">Source URL<input name="url" type="url" placeholder="https://…"></label>
+        <label class="wide">Why it may fit<textarea name="notes" rows="3" placeholder="Eligibility, relevant experience, next verification step…"></textarea></label>
+      </div>
+      <div class="dialog-actions"><button class="button button-quiet" value="cancel">Cancel</button><button class="button button-primary" id="save-opportunity" value="default">Save opportunity</button></div>
+    </form>
+  </dialog>
+  <dialog id="training-dialog">
+    <form method="dialog" id="training-form">
+      <div class="dialog-head"><div><div class="eyebrow">FREE PROFESSIONAL DEVELOPMENT</div><h2>Add a training opportunity</h2></div><button class="close-btn" value="cancel" aria-label="Close">×</button></div>
+      <div class="form-grid">
+        <label class="wide">Course or training title<input name="title" required placeholder="Course title"></label>
+        <label>Provider<input name="provider" placeholder="University, UN agency…"></label>
+        <label>Time commitment<input name="duration" placeholder="e.g. 5 weeks, 2 hours/week"></label>
+        <label class="wide">Official course URL<input name="url" type="url" required placeholder="https://…"></label>
+        <label class="wide">Profile benefit / notes<textarea name="notes" rows="3" placeholder="What will it add to your consulting profile?"></textarea></label>
+      </div>
+      <div class="dialog-actions"><button class="button button-quiet" value="cancel">Cancel</button><button class="button button-primary" id="save-training" value="default">Save training</button></div>
+    </form>
+  </dialog>
+  <div id="toast" role="status" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
+
