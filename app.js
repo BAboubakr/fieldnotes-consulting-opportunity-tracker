@@ -16,7 +16,7 @@ const PROFILE = {
 
 const OPPORTUNITY_KEY = 'fieldnotes-opportunity-tracker-v1';
 const TRAINING_KEY = 'fieldnotes-free-training-v1';
-const AI_TRAINING_MIGRATION_KEY = 'fieldnotes-ai-training-seeds-v1';
+const AI_TRAINING_MIGRATION_KEY = 'fieldnotes-ai-training-seeds-v2';
 const SEED_OPPORTUNITIES = [
   {
     id: 'afdb-kabisa-2026',
@@ -119,23 +119,23 @@ const SEED_TRAINING = [
     credential: 'Course completion certificate listed',
     fit: 'Top priority: practice using ChatGPT for scoped research, drafting client deliverables and reviewing AI output responsibly. Use non-confidential sample material.',
     status: 'Interested',
-    verified: '2026-10-24',
+    verified: '2026-11-24',
     score: 94,
-    notes: 'Course is free; availability of ChatGPT features used in exercises may depend on the account plan.'
+    notes: 'OpenAI Academy signup and the course are free. Use a free ChatGPT account for exercises; do not enter confidential client information.'
   },
   {
     id: 'ai-copilot-foundations',
     title: 'Build foundational generative AI skills',
     provider: 'Microsoft Learn · Microsoft 365 Copilot Chat',
     url: 'https://learn.microsoft.com/en-us/training/paths/explore-microsoft-365-copilot-business-chat/',
-    duration: 'About 2 hours 20 minutes · self-paced',
+    duration: 'About 2 hours 31 minutes · self-paced',
     cost: 'Free',
     credential: 'Microsoft Learn progress / module assessment',
     fit: 'High priority: apply Copilot Chat and responsible prompting to proposals, desk research, meeting preparation and client workflow tasks.',
     status: 'Interested',
-    verified: '2026-10-24',
+    verified: '2026-11-24',
     score: 91,
-    notes: 'Training is free. Microsoft notes that hands-on Copilot experience varies by license and account type.'
+    notes: 'Microsoft Learn content is free. Copilot product features and work-data access vary by account, license and organization settings; the course can be completed without buying a certification.'
   },
   {
     id: 'ai-claude-101',
@@ -147,23 +147,37 @@ const SEED_TRAINING = [
     credential: 'Completion badge',
     fit: 'High priority: learn Claude Projects, document and artifact workflows, research and connected tools for long technical reports, proposals and evidence synthesis.',
     status: 'Interested',
-    verified: '2026-10-24',
+    verified: '2026-11-24',
     score: 92,
-    notes: 'Some advanced features covered require paid plans; the course itself is free.'
+    notes: 'Claude Academy and its completion badge are free. Paid-plan-only Cowork, Research and Enterprise Search demonstrations are optional and are not required to complete the course.'
   },
   {
     id: 'ai-claude-fluency',
     title: 'AI Fluency: Framework and Foundations',
     provider: 'Claude Academy · Anthropic',
-    url: 'https://academy.claude.com/courses',
+    url: 'https://academy.claude.com/courses/ai-fluency-framework-foundations',
     duration: 'About 4 hours · self-paced',
     cost: 'Free',
     credential: 'Completion badge',
     fit: 'Useful for responsible AI use in technical evaluation, policy research and international cooperation. Emphasizes delegation, clear instructions, discernment and diligence.',
     status: 'Interested',
-    verified: '2026-10-24',
+    verified: '2026-11-24',
     score: 88,
-    notes: 'Find “AI Fluency: Framework and foundations” in the official course catalogue.'
+    notes: 'Free course with a completion badge. Course activities can be completed with a free Claude account or another AI assistant; no paid subscription is required.'
+  },
+  {
+    id: 'ai-claude-capabilities',
+    title: 'AI Capabilities and Limitations',
+    provider: 'Claude Academy · Anthropic',
+    url: 'https://academy.claude.com/courses/ai-capabilities-and-limitations',
+    duration: 'About 3.5 hours · self-paced',
+    cost: 'Free',
+    credential: 'Completion badge',
+    fit: 'High priority for technical due diligence and evaluation: learn where generative AI invents claims, struggles with niche or recent evidence, and loses context in long reports, plus practical ways to check outputs.',
+    status: 'Interested',
+    verified: '2026-11-24',
+    score: 95,
+    notes: 'Free course and badge. Useful across Claude, ChatGPT and Copilot; practice with public or synthetic technical documents.'
   }
 ];
 
@@ -176,9 +190,22 @@ function loadArray(key, fallback) {
     const value = JSON.parse(localStorage.getItem(key));
     if (Array.isArray(value)) {
       if (key === TRAINING_KEY && localStorage.getItem(AI_TRAINING_MIGRATION_KEY) !== 'done') {
-        const additions = fallback.filter(item => item.id.startsWith('ai-') && !value.some(saved => saved.id === item.id));
+        const aiSeeds = fallback.filter(item => item.id.startsWith('ai-'));
+        const oldDefaultNotes = new Set([
+          'Course is free; availability of ChatGPT features used in exercises may depend on the account plan.',
+          'Training is free. Microsoft notes that hands-on Copilot experience varies by license and account type.',
+          'Some advanced features covered require paid plans; the course itself is free.',
+          'Find “AI Fluency: Framework and foundations” in the official course catalogue.'
+        ]);
+        const refreshed = value.map(saved => {
+          const seed = aiSeeds.find(item => item.id === saved.id);
+          if (!seed) return saved;
+          const notes = !saved.notes || oldDefaultNotes.includes(saved.notes) ? seed.notes : saved.notes;
+          return { ...saved, ...seed, status: saved.status, notes };
+        });
+        const additions = aiSeeds.filter(item => !refreshed.some(saved => saved.id === item.id));
         localStorage.setItem(AI_TRAINING_MIGRATION_KEY, 'done');
-        return [...value, ...additions];
+        return [...refreshed, ...additions];
       }
       return value;
     }
@@ -251,9 +278,10 @@ function opportunityCard(item) {
 
 function trainingCard(item) {
   const link = safeUrl(item.url);
+  const category = item.category || (item.id.startsWith('ai-') ? 'Generative AI' : 'Energy & evaluation');
   return `<article class="training-card">
     <div class="training-rank"><span>${Number(item.score) || 0}</span><small>FIT</small></div>
-    <div class="training-content"><div class="card-top"><span class="tag primary">${esc(item.cost || 'Free')}</span><span class="tag">${esc(item.credential || 'Credential not stated')}</span><span class="tag">${esc(item.status)}</span></div>
+    <div class="training-content"><div class="card-top"><span class="tag primary">${esc(category)}</span><span class="tag">${esc(item.cost || 'Free')}</span><span class="tag">${esc(item.credential || 'Credential not stated')}</span><span class="tag">${esc(item.status)}</span></div>
       <h3 class="op-title">${esc(item.title)}</h3><div class="org-line">${esc(item.provider)} · ${esc(item.duration || 'Duration not stated')}</div>
       <p class="op-notes">${esc(item.fit || '')}</p>${item.notes ? `<p class="training-notes"><strong>My notes:</strong> ${esc(item.notes)}</p>` : ''}
       <div class="card-meta"><span>Checked ${esc(item.verified || 'not yet')}</span>${link ? `<a class="card-link" href="${esc(link)}" target="_blank" rel="noopener">Course page ↗</a>` : ''}</div>
@@ -349,8 +377,10 @@ function renderLinkedIn() {
 
 function renderTraining() {
   const rows = [...trainings].sort((a, b) => (b.score || 0) - (a.score || 0));
+  const aiRows = rows.filter(item => item.category === 'Generative AI' || item.id.startsWith('ai-'));
+  const professionalRows = rows.filter(item => !aiRows.includes(item));
   const complete = rows.filter(item => item.status === 'Completed').length;
-  document.querySelector('#training-view').innerHTML = `<div class="view-heading"><div class="eyebrow">PROFILE-BUILDING · FREE ONLY</div><h2>Free training</h2><p>Self-paced learning with a clear link to your consulting pipeline. Cost and certificate details are checked against the course page; re-check before enrolling.</p><div class="training-summary"><span><strong>${rows.length}</strong> saved</span><span><strong>${complete}</strong> completed</span><span><strong>0</strong> paid courses included</span></div><button class="button button-primary" id="add-training">＋ Add training</button></div>${rows.length ? rows.map(trainingCard).join('') : '<div class="empty"><strong>No training saved.</strong><p>Add a free course and track it from interested through completion.</p></div>'}`;
+  document.querySelector('#training-view').innerHTML = `<div class="view-heading"><div class="eyebrow">PROFILE-BUILDING · FREE ONLY</div><h2>Free training</h2><p>Prioritize generative AI skills for research, technical writing, proposal work and evaluation. Every listed course has free access; paid product features and optional exams are excluded from the course requirement.</p><div class="training-summary"><span><strong>${rows.length}</strong> saved</span><span><strong>${complete}</strong> completed</span><span><strong>0</strong> paid courses included</span></div><button class="button button-primary" id="add-training">＋ Add training</button></div>${aiRows.length ? `<div class="view-heading compact-heading"><div class="eyebrow">FIRST PRIORITY</div><h2>Generative AI for consulting</h2><p>Learn practical use and how to verify model outputs before they go into client work.</p></div>${aiRows.map(trainingCard).join('')}` : ''}${professionalRows.length ? `<div class="view-heading compact-heading"><div class="eyebrow">SPECIALIST KNOWLEDGE</div><h2>Energy, climate & evaluation</h2></div>${professionalRows.map(trainingCard).join('')}` : ''}${rows.length ? '' : '<div class="empty"><strong>No training saved.</strong><p>Add a free course and track it from interested through completion.</p></div>'}`;
   document.querySelectorAll('[data-training-status]').forEach(select => {
     select.onchange = () => {
       const item = trainings.find(row => row.id === select.dataset.trainingStatus);
@@ -503,3 +533,4 @@ document.querySelector('#import-file').onchange = async event => {
 };
 
 render();
+
